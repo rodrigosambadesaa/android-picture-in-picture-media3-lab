@@ -1,0 +1,8 @@
+package com.rodrigosambade.pipmedia3;
+import android.app.*; import android.os.*; import android.util.Rational; import android.view.*; import android.widget.*; import androidx.media3.common.MediaItem; import androidx.media3.exoplayer.ExoPlayer; import androidx.media3.ui.PlayerView;
+public class MainActivity extends Activity { private ExoPlayer player; private LinearLayout chrome;
+ @Override public void onCreate(Bundle b){super.onCreate(b); LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL); PlayerView pv=new PlayerView(this);root.addView(pv,new LinearLayout.LayoutParams(-1,0,1));chrome=new LinearLayout(this); Button pip=new Button(this);pip.setText("Enter PiP");pip.setOnClickListener(v->enterPip());chrome.addView(pip);root.addView(chrome);setContentView(root);player=new ExoPlayer.Builder(this).build();pv.setPlayer(player);player.setMediaItem(MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4"));player.prepare();player.play(); if(Build.VERSION.SDK_INT>=31)setPictureInPictureParams(new PictureInPictureParams.Builder().setAspectRatio(new Rational(16,9)).setAutoEnterEnabled(true).build());}
+ private void enterPip(){if(Build.VERSION.SDK_INT>=26)enterPictureInPictureMode(new PictureInPictureParams.Builder().setAspectRatio(new Rational(16,9)).build());}
+ @Override public void onPictureInPictureModeChanged(boolean inPip, android.content.res.Configuration c){super.onPictureInPictureModeChanged(inPip,c);chrome.setVisibility(inPip?View.GONE:View.VISIBLE);}
+ @Override protected void onDestroy(){super.onDestroy();player.release();}
+}
