@@ -14,6 +14,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -198,9 +199,12 @@ public final class ConnectivityAndInternetAccess {
         }
 
         NetworkCapabilities capabilities = manager.getNetworkCapabilities(activeNetwork);
+        boolean notSuspended = capabilities != null
+                && (Build.VERSION.SDK_INT < Build.VERSION_CODES.P
+                || capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED));
         boolean connected = capabilities != null
                 && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED);
+                && notSuspended;
         boolean validated = connected
                 && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
         boolean captivePortal = capabilities != null
