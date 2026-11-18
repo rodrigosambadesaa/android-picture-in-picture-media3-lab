@@ -3,6 +3,10 @@ on:
   push:
   pull_request:
 
+# CVE-2026-114938: disable affected Base64 intrinsic in build JVM.
+env:
+  JAVA_TOOL_OPTIONS: -XX:-UseBASE64Intrinsics
+
 jobs:
   build:
     runs-on: ubuntu-latest
